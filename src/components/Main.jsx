@@ -80,7 +80,7 @@ function Main() {
                     <h6 className="m-0">{el?.user.displayName}</h6>
                     <span className="text-secondary">
                       {el.user.date.toDate().toLocaleDateString() +
-                        "-" +
+                        " - " +
                         el.user.date.toDate().toLocaleTimeString()}
                     </span>
                   </div>
