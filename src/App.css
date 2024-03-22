@@ -1,0 +1,8 @@
+.googleBtn {
+  transition: .5s !important;
+}
+
+.googleBtn:hover {
+  background-color: #000 !important;
+  color: white !important;
+}
