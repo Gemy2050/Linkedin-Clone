@@ -10,6 +10,7 @@
 
 .header ul li {
   cursor: pointer;
+  user-select: none;
 }
 
 .header ul li div {

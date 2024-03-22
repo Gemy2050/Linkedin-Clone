@@ -29,7 +29,7 @@ function RightSide() {
             <button className="btn btn-sm rounded-pill">+ Follow</button>
           </div>
         </div>
-        <p className="text-primary mt-3 mb-0">View all recommendations.. </p>
+        <p className="text-primary mt-3 mb-0">View all.. </p>
       </div>
       <div className="bg-img p-3 rounded-3 mt-2">
         <img
