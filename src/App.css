@@ -6,3 +6,16 @@
   background-color: #000 !important;
   color: white !important;
 }
+
+.loader {
+  position: fixed;
+  inset: 0;
+  background-color: #FFF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 100px;
+  }
+}

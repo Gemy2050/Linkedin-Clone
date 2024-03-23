@@ -5,7 +5,7 @@ function Header() {
   const { user } = useSelector((state) => state.userState);
 
   return (
-    <div className="header">
+    <div className="header sticky-top shadow-lg">
       <div className="container pt-2 d-flex gap-2 align-items-start justify-content-between">
         <div className="left d-flex gap-2 align-items-center">
           <img src="/images/linkedin.png" alt="logo" />

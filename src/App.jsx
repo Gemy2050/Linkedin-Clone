@@ -24,6 +24,9 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
       </Routes>
+      <div className="loader" id="loader">
+        <img src="/images/loader.svg" alt="" />
+      </div>
     </div>
   );
 }
