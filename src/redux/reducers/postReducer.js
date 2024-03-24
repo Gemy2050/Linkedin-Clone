@@ -1,7 +1,8 @@
-import { SET_POST } from "../actions/actionTypes";
+import { SET_DETAILS, SET_POST } from "../actions/actionTypes";
 
 const initialState = {
   post: null,
+  details: null,
 };
 
 const postReducer = (state = initialState, action) => {
@@ -11,6 +12,8 @@ const postReducer = (state = initialState, action) => {
         ...state,
         post: action.post,
       };
+    case SET_DETAILS:
+      return { ...state, details: action.details };
     default:
       return state;
   }

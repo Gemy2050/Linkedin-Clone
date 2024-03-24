@@ -26,3 +26,9 @@ export const setPost = (payload) => {
     post: payload,
   };
 };
+export const setDetails = (payload) => {
+  return {
+    type: all.SET_DETAILS,
+    details: payload,
+  };
+};

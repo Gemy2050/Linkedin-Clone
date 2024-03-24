@@ -1,12 +1,29 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setDetails } from "../redux/actions/actions";
+import { commentOnPost, getComments } from "../redux/actions";
 
-function PostDetailsModal() {
-  const { post } = useSelector((state) => state.postState);
+function PostDetailsModal({ user }) {
+  const { post, details } = useSelector((state) => state.postState);
+  const dispatch = useDispatch();
+  const [commentValue, setCommentValue] = useState("");
+
+  const commentRef = useRef();
+
+  const handleComment = () => {
+    if (commentValue.trim() == "") {
+      return false;
+    }
+
+    dispatch(commentOnPost({ user, post, commentValue }));
+    dispatch(getComments(post));
+    setCommentValue("");
+    commentRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div
-      className="modal fade"
+      className="modal fade "
       id="postDetails"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
@@ -17,17 +34,36 @@ function PostDetailsModal() {
       <div className="modal-dialog modal-dialog-scrollable">
         <div className="modal-content">
           <div className="modal-header">
-            <h1 className="modal-title fs-5" id="staticBackdropLabel">
+            <h1
+              className="modal-title fs-6 d-flex align-items-center gap-4"
+              id="staticBackdropLabel"
+            >
               <div
-                className="d-flex align-items-center gap-2"
+                className="d-flex align-items-center gap-1"
                 style={{ cursor: "pointer" }}
+                onClick={() => dispatch(setDetails("like"))}
               >
+                <span>{post?.likes?.length}</span>
                 <img
                   src="https://static-exp1.licdn.com/sc/h/2uxqgankkcxm505qn812vqyss"
                   alt="likes"
                   loading="lazy"
                 />
-                <span>{post?.likes?.length}</span>
+              </div>
+              <div
+                className="d-flex align-items-center gap-1"
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  dispatch(setDetails("comment"));
+                  dispatch(getComments(post));
+                }}
+              >
+                <span>{post?.comments?.length}</span>
+                <img
+                  src="/images/comment-icon.svg"
+                  alt="comments"
+                  loading="lazy"
+                />
               </div>
             </h1>
             <button
@@ -37,37 +73,84 @@ function PostDetailsModal() {
               aria-label="Close"
             ></button>
           </div>
-          <div className="modal-body">
-            {post?.likes.map((el) => {
-              return (
-                <div
-                  key={el.uid}
-                  className="p-2 d-flex align-items-center gap-2 border-bottom"
-                  style={{ cursor: "pointer" }}
-                >
-                  <img
-                    src={el.photoURL}
-                    alt="user"
-                    loading="lazy"
-                    className="rounded-circle"
-                    style={{ width: "40px" }}
+          <div className="modal-body mb-3 pb-0">
+            {details === "like" ? (
+              post?.likes.map((el) => {
+                return (
+                  <div
+                    key={el.uid}
+                    className="p-2 d-flex align-items-center gap-2 border-bottom"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <img
+                      src={el.photoURL}
+                      alt="user"
+                      loading="lazy"
+                      className="rounded-circle"
+                      style={{ width: "40px" }}
+                    />
+                    <span>{el.displayName}</span>
+                  </div>
+                );
+              })
+            ) : (
+              <>
+                {post?.comments?.length > 0 ? (
+                  post.comments.map((el) => {
+                    return (
+                      <div
+                        key={el.date}
+                        className="p-2 d-flex align-items-center gap-2 border-bottom mb-2"
+                        style={{ cursor: "pointer" }}
+                        ref={commentRef}
+                      >
+                        <img
+                          src={el.photoURL}
+                          alt="user"
+                          loading="lazy"
+                          className="rounded-circle"
+                          style={{ width: "40px" }}
+                        />
+                        <div>
+                          <span>{el.displayName}</span>
+                          <p
+                            className="m-0 bg-dark text-white px-3 py-2 rounded-3"
+                            style={{ fontSize: "14px" }}
+                          >
+                            {el.comment}
+                          </p>
+                          <span
+                            className="text-secondary"
+                            style={{ fontSize: "12px" }}
+                          >
+                            {new Date(el.date).toLocaleDateString() +
+                              " - " +
+                              new Date(el.date)
+                                .toLocaleTimeString()
+                                .slice(0, -3)}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <h6 className="text-secondary text-center mb-4">
+                    No Comments
+                  </h6>
+                )}
+                <div className="sticky-bottom bg-white d-flex align-items-center gap-1 mt-3 py-2">
+                  <input
+                    placeholder="type your comment.."
+                    className="form-control"
+                    value={commentValue}
+                    onChange={(e) => setCommentValue(e.target.value)}
                   />
-                  <span>{el.displayName}</span>
+                  <button className="btn btn-primary" onClick={handleComment}>
+                    Send
+                  </button>
                 </div>
-              );
-            })}
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button type="button" className="btn btn-primary">
-              Ok
-            </button>
+              </>
+            )}
           </div>
         </div>
       </div>

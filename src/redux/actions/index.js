@@ -8,12 +8,9 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import {
-  addDoc,
-  arrayRemove,
   arrayUnion,
   collection,
   deleteDoc,
-  deleteField,
   doc,
   getDoc,
   onSnapshot,
@@ -186,5 +183,30 @@ export const likePost = (user, postUser, isLiked) => {
         likes: newLikes,
       });
     }
+  };
+};
+
+export const commentOnPost = ({ user, post, commentValue }) => {
+  return (dispatch) => {
+    updateDoc(doc(db, "posts", post.user.uid + post.user.date), {
+      comments: arrayUnion({
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        uid: user.uid,
+        date: Date.now(),
+        comment: commentValue,
+      }),
+    });
+  };
+};
+
+export const getComments = (post) => {
+  return async (dispatch) => {
+    let postDoc = await getDoc(
+      doc(db, "posts", post.user.uid + post.user.date)
+    );
+    let postData = postDoc.data();
+    dispatch(all.setPost(postData));
   };
 };

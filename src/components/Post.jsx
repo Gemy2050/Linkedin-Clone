@@ -3,7 +3,7 @@ import ReactPlayer from "react-player";
 import { useDispatch, useSelector } from "react-redux";
 import { deletePost, likePost } from "../redux/actions";
 import Swal from "sweetalert2";
-import { setPost } from "../redux/actions/actions";
+import { setDetails, setPost } from "../redux/actions/actions";
 
 function Post({ el }) {
   const { user } = useSelector((state) => state.userState);
@@ -11,7 +11,7 @@ function Post({ el }) {
 
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const [isLiked, setIsLiked] = useState(
-    el.likes.find((el) => el.uid == user?.uid)
+    el.likes.find((el) => el.uid == user?.uid) ? true : false
   );
 
   const handleDeletePost = () => {
@@ -119,17 +119,20 @@ function Post({ el }) {
           <div className="info py-2 border-bottom d-flex gap-3 align-items-center text-secondary">
             <div
               className="likes-count d-flex align-items-center"
+              style={{ cursor: "pointer" }}
               data-bs-toggle="modal"
               data-bs-target="#postDetails"
-              style={{ cursor: "pointer" }}
-              onClick={() => dispatch(setPost(el))}
+              onClick={() => {
+                dispatch(setPost(el));
+                dispatch(setDetails("like"));
+              }}
             >
+              <span className="me-1">{el.likes.length}</span>
               <img
                 src="https://static-exp1.licdn.com/sc/h/2uxqgankkcxm505qn812vqyss"
                 alt="likes"
                 loading="lazy"
               />
-              <span className="ms-1">{el.likes.length}</span>
             </div>
             <div className="comments">{el.comments.length} comment</div>
             <div className="shares">{el.shares} share</div>
@@ -150,7 +153,15 @@ function Post({ el }) {
               )}
               <span className="text-secondary">Like</span>
             </button>
-            <button className="d-flex align-items-center justify-content-center gap-1">
+            <button
+              className="d-flex align-items-center justify-content-center gap-1"
+              data-bs-toggle="modal"
+              data-bs-target="#postDetails"
+              onClick={() => {
+                dispatch(setPost(el));
+                dispatch(setDetails("comment"));
+              }}
+            >
               <img
                 src="/images/comment-icon.svg"
                 alt="comment"
