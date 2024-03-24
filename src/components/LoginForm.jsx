@@ -11,7 +11,6 @@ function LoginForm() {
 
   useEffect(() => {
     user && navigate("/home", { replace: true });
-    console.log("User", user);
   }, [user]);
 
   return (

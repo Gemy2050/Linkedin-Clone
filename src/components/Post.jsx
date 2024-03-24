@@ -11,7 +11,7 @@ function Post({ el }) {
 
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const [isLiked, setIsLiked] = useState(
-    el.likes.find((el) => el.uid == user.uid)
+    el.likes.find((el) => el.uid == user?.uid)
   );
 
   const handleDeletePost = () => {
