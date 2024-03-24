@@ -9,13 +9,18 @@ import {
 } from "firebase/storage";
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
+  deleteField,
   doc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import Swal from "sweetalert2";
 
@@ -39,7 +44,6 @@ export function userAuth() {
       } else {
         dispatch(all.setUser(null));
       }
-      console.log("User Auth Change", user);
       document.querySelector("#loader").style.display = "none";
     });
   };
@@ -67,9 +71,9 @@ export function uploadData(data) {
               text: data.text,
               image: downloadURL,
               video: data.video,
-              comments: 0,
+              comments: [],
               shares: 0,
-              likes: 0,
+              likes: [],
             }).then(() => dispatch(all.setLoading(false)));
           });
         }
@@ -80,9 +84,9 @@ export function uploadData(data) {
         text: data.text,
         image: data.image,
         video: data.video,
-        comments: 0,
+        comments: [],
         shares: 0,
-        likes: 0,
+        likes: [],
       }).then(() => dispatch(all.setLoading(false)));
     }
   };
@@ -113,7 +117,73 @@ export const deletePost = ({ user, image }) => {
       // Delete the file
       deleteObject(imgRef).then(() => {
         // File deleted successfully
-        console.log("Image Deleted");
+      });
+    }
+  };
+};
+
+export const editPost = ({ text, videoLink, image, postID }) => {
+  return (dispatch) => {
+    dispatch(all.setLoading(true));
+    if (image) {
+      const imgRef = ref(storage, `images/${postID}`);
+      // Delete Old Image
+      deleteObject(imgRef).then(() => {
+        // Image deleted successfully
+      });
+
+      // Upload New Image
+      const storageRef = ref(storage, `images/${postID}`);
+      const uploadImage = uploadBytesResumable(storageRef, image);
+      uploadImage.on(
+        "state_changed",
+        (snapshot) => {},
+        (error) => {
+          Swal.fire(error.message, "", "error");
+        },
+        () => {
+          getDownloadURL(uploadImage.snapshot.ref).then((downloadURL) => {
+            updateDoc(doc(db, "posts", postID), {
+              text: text,
+              image: downloadURL,
+            }).then(() => {
+              dispatch(all.setLoading(false));
+            });
+          });
+        }
+      );
+    } else {
+      updateDoc(doc(db, "posts", postID), {
+        video: videoLink,
+        text: text,
+      }).then(() => {
+        dispatch(all.setLoading(false));
+      });
+    }
+    Swal.fire("Post Update", "", "success");
+  };
+};
+
+export const likePost = (user, postUser, isLiked) => {
+  return async (dispatch) => {
+    if (!isLiked) {
+      updateDoc(doc(db, "posts", postUser.uid + postUser.date), {
+        likes: arrayUnion({
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          uid: user.uid,
+        }),
+      });
+    } else {
+      let postDoc = await getDoc(
+        doc(db, "posts", postUser.uid + postUser.date)
+      );
+      let postData = postDoc.data();
+      let newLikes = postData.likes.filter((el) => el.uid != user.uid);
+
+      updateDoc(doc(db, "posts", postUser.uid + postUser.date), {
+        likes: newLikes,
       });
     }
   };

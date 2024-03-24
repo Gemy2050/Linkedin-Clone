@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePost } from "../redux/actions";
+import { deletePost, likePost } from "../redux/actions";
 import Swal from "sweetalert2";
+import { setPost } from "../redux/actions/actions";
 
 function Post({ el }) {
-  const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const { user } = useSelector((state) => state.userState);
   const dispatch = useDispatch();
+
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+  const [isLiked, setIsLiked] = useState(
+    el.likes.find((el) => el.uid == user.uid)
+  );
 
   const handleDeletePost = () => {
     Swal.fire({
@@ -26,7 +31,7 @@ function Post({ el }) {
     document.querySelector("#postID").value = el.user.uid + el.user.date;
     if (el.image) {
       document.querySelector("#editVideoContainer").style.display = "none";
-      document.querySelector("#editImageContainer").style.display = "none";
+      document.querySelector("#editImageContainer").style.display = "block";
       document.querySelector("#editImageView").src = el.image;
       document.querySelector("#editVideoLink").value = "";
     } else if (el.video) {
@@ -38,6 +43,11 @@ function Post({ el }) {
       document.querySelector("#editImageContainer").style.display = "none";
       document.querySelector("#editVideoLink").value = "";
     }
+  };
+
+  const handleIsLike = () => {
+    setIsLiked(!isLiked);
+    dispatch(likePost(user, el.user, isLiked));
   };
 
   return (
@@ -107,25 +117,37 @@ function Post({ el }) {
         )}
         <div className="footer px-3 py-2">
           <div className="info py-2 border-bottom d-flex gap-3 align-items-center text-secondary">
-            <div className="likes-count d-flex align-items-center">
+            <div
+              className="likes-count d-flex align-items-center"
+              data-bs-toggle="modal"
+              data-bs-target="#postDetails"
+              style={{ cursor: "pointer" }}
+              onClick={() => dispatch(setPost(el))}
+            >
               <img
                 src="https://static-exp1.licdn.com/sc/h/2uxqgankkcxm505qn812vqyss"
                 alt="likes"
                 loading="lazy"
               />
-              {/* <img
-                src="https://static-exp1.licdn.com/sc/h/f58e354mjsjpdd67eq51cuh49"
-                alt="likes"
-                loading="lazy"
-              /> */}
-              <span className="ms-1">{el.likes}</span>
+              <span className="ms-1">{el.likes.length}</span>
             </div>
-            <div className="comments">{el.comments} comment</div>
+            <div className="comments">{el.comments.length} comment</div>
             <div className="shares">{el.shares} share</div>
           </div>
           <div className="icons pt-2 d-flex align-items-center">
-            <button className="d-flex align-items-center justify-content-center gap-1">
-              <img src="/images/like-icon.svg" alt="like" loading="lazy" />
+            <button
+              className="d-flex align-items-center justify-content-center gap-1"
+              onClick={handleIsLike}
+            >
+              {isLiked ? (
+                <img
+                  src="https://static-exp1.licdn.com/sc/h/2uxqgankkcxm505qn812vqyss"
+                  alt="likes"
+                  loading="lazy"
+                />
+              ) : (
+                <img src="/images/like-icon.svg" alt="like" loading="lazy" />
+              )}
               <span className="text-secondary">Like</span>
             </button>
             <button className="d-flex align-items-center justify-content-center gap-1">

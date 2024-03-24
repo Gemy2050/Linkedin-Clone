@@ -1,24 +1,26 @@
 import { doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { db } from "../firebase";
+import Swal from "sweetalert2";
+import { editPost } from "../redux/actions";
+import { useDispatch } from "react-redux";
 
-function EditPostForm() {
+function EditPostForm({ user }) {
   const [image, setImage] = useState("");
-  const [imageID, setImageID] = useState(null);
-
-  const handleIDChange = (e) => {
-    setImageID(e.target.value);
-  };
+  const dispatch = useDispatch();
 
   const handleUpdate = () => {
     let videoLink = document.querySelector("#editVideoLink").value;
     let text = document.querySelector("#editTitleInput").value;
     let postID = document.querySelector("#postID").value;
 
-    updateDoc(doc(db, "posts", postID), {
-      video: videoLink,
-      text: text,
-    });
+    if (!text) {
+      Swal.fire("Title can not be empty", "", "error");
+      return;
+    }
+
+    dispatch(editPost({ user, text, videoLink, image, postID }));
+    setImage("");
   };
 
   return (
@@ -86,12 +88,7 @@ function EditPostForm() {
                     id="editImageView"
                   />
                 </div>
-                <input
-                  type="text"
-                  id="postID"
-                  hidden
-                  onChange={handleIDChange}
-                />
+                <input type="text" id="postID" hidden />
               </form>
             </div>
             <div className="modal-footer">

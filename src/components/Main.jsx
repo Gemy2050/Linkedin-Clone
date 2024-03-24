@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { showPosts } from "../redux/actions";
 import Post from "./Post";
 import EditPostForm from "./EditPostForm";
+import PostDetailsModal from "./PostDetailsModal";
 
 function Main() {
   const dispatch = useDispatch();
@@ -17,7 +18,8 @@ function Main() {
   return (
     <div className="main">
       <PostModal user={user} />
-      <EditPostForm />
+      <EditPostForm user={user} />
+      <PostDetailsModal />
       <div className="posts mt-2">
         {loading && (
           <div className="text-center">
