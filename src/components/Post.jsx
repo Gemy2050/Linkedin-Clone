@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePost, likePost } from "../redux/actions";
+import {
+  deletePost,
+  deleteSharedPost,
+  likePost,
+  sharePost,
+} from "../redux/actions";
 import Swal from "sweetalert2";
 import { setDetails, setPost } from "../redux/actions/actions";
 
@@ -21,66 +26,106 @@ function Post({ el }) {
       showCancelButton: true,
     }).then((data) => {
       if (data.isConfirmed) {
-        dispatch(deletePost(el));
+        if (el.shared) {
+          dispatch(deleteSharedPost(el.sharedUser));
+        } else {
+          dispatch(deletePost(el));
+        }
       }
     });
   };
 
-  const handleEditPost = () => {
-    document.querySelector("#editTitleInput").value = el.text;
-    document.querySelector("#postID").value = el.user.uid + el.user.date;
-    if (el.image) {
-      document.querySelector("#editVideoContainer").style.display = "none";
-      document.querySelector("#editImageContainer").style.display = "block";
-      document.querySelector("#editImageView").src = el.image;
-      document.querySelector("#editVideoLink").value = "";
-    } else if (el.video) {
-      document.querySelector("#editVideoLink").value = el.video;
-      document.querySelector("#editVideoContainer").style.display = "block";
-      document.querySelector("#editImageContainer").style.display = "none";
-    } else {
-      document.querySelector("#editVideoContainer").style.display = "none";
-      document.querySelector("#editImageContainer").style.display = "none";
-      document.querySelector("#editVideoLink").value = "";
-    }
-  };
-
   const handleIsLike = () => {
     setIsLiked(!isLiked);
-    dispatch(likePost(user, el.user, isLiked));
+    dispatch(likePost(user, el, isLiked));
+  };
+
+  const handleSharePost = () => {
+    dispatch(setPost(el));
+
+    Swal.fire({
+      title: `Share This Post: ${el.text}? `,
+      icon: "warning",
+      showCancelButton: true,
+    }).then((dataRes) => {
+      if (dataRes.isConfirmed) {
+        let data = {
+          sharedUser: {
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            uid: user.uid,
+            date: Date.now(),
+          },
+
+          user: el.user,
+          text: el.text,
+          video: el.video,
+          image: el.image,
+        };
+
+        dispatch(sharePost(data));
+      }
+    });
   };
 
   return (
     <>
       <div className="post mb-2 border rounded-3 position-relative">
-        {el?.user.uid == user?.uid && (
-          <div
-            className="options"
-            onClick={() => setShowOptionsMenu(!showOptionsMenu)}
-          >
-            <img
-              src="https://linkedin-clone-723e6.web.app/images/ellipsis.svg"
-              alt="options"
-            />
-            {showOptionsMenu && (
-              <ul className="p-3 rounded-3 shadow">
-                <li className="border-bottom pb-2">Share Post</li>
-                <li
-                  className="border-bottom py-2"
-                  data-bs-toggle="modal"
-                  data-bs-target="#editPostModal"
-                  onClick={handleEditPost}
-                >
-                  Edit Post
-                </li>
-                <li className="pt-2" onClick={handleDeletePost}>
-                  Delete Post
-                </li>
-              </ul>
-            )}
-          </div>
-        )}
+        <div
+          className="options"
+          onClick={() => {
+            setShowOptionsMenu(!showOptionsMenu);
+          }}
+        >
+          <img src="/images/ellipsis.svg" alt="options" />
+          {showOptionsMenu && (
+            <ul className="p-3 rounded-3 shadow">
+              <li className="border-bottom pb-2">Save Post</li>
+              {((el?.user.uid == user?.uid && !el?.shared) ||
+                el?.sharedUser?.uid == user?.uid) && (
+                <>
+                  {!el?.sharedUser?.uid && (
+                    <li
+                      className="border-bottom py-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editPostModal"
+                      onClick={() => dispatch(setPost(el))}
+                    >
+                      Edit Post
+                    </li>
+                  )}
+                  <li className="pt-2" onClick={handleDeletePost}>
+                    Delete Post
+                  </li>
+                </>
+              )}
+            </ul>
+          )}
+        </div>
         <div className="head p-2 p-sm-3">
+          {el?.sharedUser && (
+            <div className="alert alert-secondary">
+              <div className="info d-flex gap-2 align-items-center">
+                <img
+                  src={el?.sharedUser.photoURL}
+                  alt="post"
+                  className="rounded-circle"
+                  loading="lazy"
+                />
+                <div>
+                  <h6 className="m-0">{el?.sharedUser.displayName}</h6>
+                  <span className="text-secondary">
+                    {new Date(el?.sharedUser.date).toLocaleDateString() +
+                      " - " +
+                      new Date(el?.sharedUser.date)
+                        .toLocaleTimeString()
+                        .slice(0, -3)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="info d-flex gap-2 align-items-center">
             <img
               src={el?.user.photoURL}
@@ -102,7 +147,7 @@ function Post({ el }) {
         {el.image ? (
           <div className="image">
             <img
-              className="img-fluid"
+              className="img-fluid w-100"
               src={el.image}
               alt="post"
               loading="lazy"
@@ -135,7 +180,7 @@ function Post({ el }) {
               />
             </div>
             <div className="comments">{el.comments.length} comment</div>
-            <div className="shares">{el.shares} share</div>
+            <div className="shares">{el.shares.length} share</div>
           </div>
           <div className="icons pt-2 d-flex align-items-center">
             <button
@@ -169,14 +214,17 @@ function Post({ el }) {
               />
               <span className="text-secondary">Comment</span>
             </button>
-            <button className="d-flex align-items-center justify-content-center gap-1">
+            <button
+              className="d-flex align-items-center justify-content-center gap-1"
+              onClick={handleSharePost}
+            >
               <img src="/images/share-icon.svg" alt="share" loading="lazy" />
               <span className="text-secondary">Share</span>
             </button>
-            <button className="d-none d-flex align-items-center justify-content-center gap-1">
+            {/* <button className="d-flex align-items-center justify-content-center gap-1">
               <img src="/images/send-icon.svg" alt="send" loading="lazy" />
               <span className="text-secondary">Send</span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

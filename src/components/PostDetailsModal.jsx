@@ -1,14 +1,22 @@
-import { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setDetails } from "../redux/actions/actions";
-import { commentOnPost, getComments } from "../redux/actions";
+import { commentOnPost, refreshPost } from "../redux/actions";
 
 function PostDetailsModal({ user }) {
   const { post, details } = useSelector((state) => state.postState);
+  const { posts } = useSelector((state) => state.postsState);
+
   const dispatch = useDispatch();
   const [commentValue, setCommentValue] = useState("");
 
   const commentRef = useRef();
+
+  useEffect(() => {
+    if (post) {
+      dispatch(refreshPost(post));
+    }
+  }, [posts]);
 
   const handleComment = () => {
     if (commentValue.trim() == "") {
@@ -16,14 +24,13 @@ function PostDetailsModal({ user }) {
     }
 
     dispatch(commentOnPost({ user, post, commentValue }));
-    dispatch(getComments(post));
     setCommentValue("");
     commentRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <div
-      className="modal fade "
+      className="modal fade"
       id="postDetails"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
@@ -31,7 +38,7 @@ function PostDetailsModal({ user }) {
       aria-labelledby="staticBackdropLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog modal-dialog-scrollable">
+      <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
             <h1
@@ -41,7 +48,9 @@ function PostDetailsModal({ user }) {
               <div
                 className="d-flex align-items-center gap-1"
                 style={{ cursor: "pointer" }}
-                onClick={() => dispatch(setDetails("like"))}
+                onClick={() => {
+                  dispatch(setDetails("like"));
+                }}
               >
                 <span>{post?.likes?.length}</span>
                 <img
@@ -55,7 +64,6 @@ function PostDetailsModal({ user }) {
                 style={{ cursor: "pointer" }}
                 onClick={() => {
                   dispatch(setDetails("comment"));
-                  dispatch(getComments(post));
                 }}
               >
                 <span>{post?.comments?.length}</span>
@@ -73,26 +81,33 @@ function PostDetailsModal({ user }) {
               aria-label="Close"
             ></button>
           </div>
-          <div className="modal-body mb-3 pb-0">
+          <div
+            className="modal-body mb-3 pb-0 d-flex flex-column"
+            style={{ height: "100vh" }}
+          >
             {details === "like" ? (
-              post?.likes.map((el) => {
-                return (
-                  <div
-                    key={el.uid}
-                    className="p-2 d-flex align-items-center gap-2 border-bottom"
-                    style={{ cursor: "pointer" }}
-                  >
-                    <img
-                      src={el.photoURL}
-                      alt="user"
-                      loading="lazy"
-                      className="rounded-circle"
-                      style={{ width: "40px" }}
-                    />
-                    <span>{el.displayName}</span>
-                  </div>
-                );
-              })
+              post.likes.length > 0 ? (
+                post?.likes.map((el) => {
+                  return (
+                    <div
+                      key={el.uid}
+                      className="p-2 d-flex align-items-center gap-2 border-bottom"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <img
+                        src={el.photoURL}
+                        alt="user"
+                        loading="lazy"
+                        className="rounded-circle"
+                        style={{ width: "40px" }}
+                      />
+                      <span>{el.displayName}</span>
+                    </div>
+                  );
+                })
+              ) : (
+                <h6 className="text-secondary text-center mb-4">No Likes</h6>
+              )
             ) : (
               <>
                 {post?.comments?.length > 0 ? (
@@ -138,7 +153,7 @@ function PostDetailsModal({ user }) {
                     No Comments
                   </h6>
                 )}
-                <div className="sticky-bottom bg-white d-flex align-items-center gap-1 mt-3 py-2">
+                <div className="sticky-bottom mt-auto bg-white d-flex align-items-center gap-1 mt-3 py-2">
                   <input
                     placeholder="type your comment.."
                     className="form-control"
@@ -158,4 +173,4 @@ function PostDetailsModal({ user }) {
   );
 }
 
-export default PostDetailsModal;
+export default React.memo(PostDetailsModal);

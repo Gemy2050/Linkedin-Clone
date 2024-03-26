@@ -19,7 +19,7 @@ function Main() {
     <div className="main">
       <PostModal user={user} />
       <EditPostForm user={user} />
-      <PostDetailsModal user={user} />
+      {posts && <PostDetailsModal user={user} />}
       <div className="posts mt-2">
         {loading && (
           <div className="text-center">

@@ -69,8 +69,9 @@ export function uploadData(data) {
               image: downloadURL,
               video: data.video,
               comments: [],
-              shares: 0,
+              shares: [],
               likes: [],
+              date: Date.now(),
             }).then(() => dispatch(all.setLoading(false)));
           });
         }
@@ -82,8 +83,9 @@ export function uploadData(data) {
         image: data.image,
         video: data.video,
         comments: [],
-        shares: 0,
+        shares: [],
         likes: [],
+        date: Date.now(),
       }).then(() => dispatch(all.setLoading(false)));
     }
   };
@@ -92,7 +94,7 @@ export function uploadData(data) {
 export const showPosts = () => {
   return (dispatch) => {
     const collectionRef = collection(db, "posts");
-    const q = query(collectionRef, orderBy("user.date", "desc"));
+    const q = query(collectionRef, orderBy("date", "desc"));
     let data;
     onSnapshot(q, (snapshot) => {
       data = snapshot.docs.map((el) => el.data());
@@ -116,6 +118,15 @@ export const deletePost = ({ user, image }) => {
         // File deleted successfully
       });
     }
+  };
+};
+
+export const deleteSharedPost = (sharedUser) => {
+  return (dispatch) => {
+    dispatch(all.setLoading(true));
+    deleteDoc(doc(db, "posts", sharedUser.uid + sharedUser.date)).then(() =>
+      dispatch(all.setLoading(false))
+    );
   };
 };
 
@@ -161,10 +172,14 @@ export const editPost = ({ text, videoLink, image, postID }) => {
   };
 };
 
-export const likePost = (user, postUser, isLiked) => {
+export const likePost = (user, post, isLiked) => {
   return async (dispatch) => {
+    let postID = post.user.uid + post.user.date;
+    if (post.shared) {
+      postID = post.sharedUser.uid + post.sharedUser.date;
+    }
     if (!isLiked) {
-      updateDoc(doc(db, "posts", postUser.uid + postUser.date), {
+      updateDoc(doc(db, "posts", postID), {
         likes: arrayUnion({
           displayName: user.displayName,
           email: user.email,
@@ -173,13 +188,11 @@ export const likePost = (user, postUser, isLiked) => {
         }),
       });
     } else {
-      let postDoc = await getDoc(
-        doc(db, "posts", postUser.uid + postUser.date)
-      );
+      let postDoc = await getDoc(doc(db, "posts", postID));
       let postData = postDoc.data();
       let newLikes = postData.likes.filter((el) => el.uid != user.uid);
 
-      updateDoc(doc(db, "posts", postUser.uid + postUser.date), {
+      updateDoc(doc(db, "posts", postID), {
         likes: newLikes,
       });
     }
@@ -188,7 +201,11 @@ export const likePost = (user, postUser, isLiked) => {
 
 export const commentOnPost = ({ user, post, commentValue }) => {
   return (dispatch) => {
-    updateDoc(doc(db, "posts", post.user.uid + post.user.date), {
+    let postID = post.user.uid + post.user.date;
+    if (post.shared) {
+      postID = post.sharedUser.uid + post.sharedUser.date;
+    }
+    updateDoc(doc(db, "posts", postID), {
       comments: arrayUnion({
         displayName: user.displayName,
         email: user.email,
@@ -201,11 +218,41 @@ export const commentOnPost = ({ user, post, commentValue }) => {
   };
 };
 
-export const getComments = (post) => {
+export const sharePost = ({ sharedUser, user, text, video, image }) => {
+  return (dispatch) => {
+    dispatch(all.setLoading(true));
+
+    updateDoc(doc(db, "posts", user.uid + user.date), {
+      shares: arrayUnion({
+        displayName: sharedUser.displayName,
+        email: sharedUser.email,
+        photoURL: sharedUser.photoURL,
+        uid: sharedUser.uid,
+      }),
+    });
+
+    setDoc(doc(db, "posts", sharedUser.uid + sharedUser.date), {
+      sharedUser,
+      user,
+      text,
+      image,
+      video,
+      shared: true,
+      comments: [],
+      shares: [],
+      likes: [],
+      date: Date.now(),
+    }).then(() => dispatch(all.setLoading(false)));
+  };
+};
+
+export const refreshPost = (post) => {
   return async (dispatch) => {
-    let postDoc = await getDoc(
-      doc(db, "posts", post.user.uid + post.user.date)
-    );
+    let postID = post.user.uid + post.user.date;
+    if (post.shared) {
+      postID = post.sharedUser.uid + post.sharedUser.date;
+    }
+    let postDoc = await getDoc(doc(db, "posts", postID));
     let postData = postDoc.data();
     dispatch(all.setPost(postData));
   };

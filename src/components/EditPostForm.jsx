@@ -1,25 +1,39 @@
-import { doc, updateDoc } from "firebase/firestore";
-import React, { useState } from "react";
-import { db } from "../firebase";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { editPost } from "../redux/actions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 function EditPostForm({ user }) {
   const [image, setImage] = useState("");
+  const [isImageURL, setISImageURL] = useState(false);
+  const [text, setText] = useState("");
+  const [video, setVideo] = useState("");
+
+  const { post } = useSelector((state) => state.postState);
   const dispatch = useDispatch();
 
-  const handleUpdate = () => {
-    let videoLink = document.querySelector("#editVideoLink").value;
-    let text = document.querySelector("#editTitleInput").value;
-    let postID = document.querySelector("#postID").value;
+  useEffect(() => {
+    if (post) {
+      setText(post.text);
+      setVideo(post.video);
+      setISImageURL(true);
+    }
+  }, [post]);
 
+  const handleUpdate = () => {
     if (!text) {
       Swal.fire("Title can not be empty", "", "error");
       return;
     }
 
-    dispatch(editPost({ user, text, videoLink, image, postID }));
+    dispatch(
+      editPost({
+        text,
+        videoLink: video,
+        image,
+        postID: post.user.uid + post.user.date,
+      })
+    );
     setImage("");
   };
 
@@ -58,36 +72,47 @@ function EditPostForm({ user }) {
                     id="editTitleInput"
                     required
                     style={{ resize: "none", minHeight: "90px" }}
+                    onChange={(e) => setText(e.target.value)}
+                    value={text}
                   ></textarea>
                 </div>
-                <div className="mb-3" id="editVideoContainer">
-                  <label htmlFor="message-text" className="col-form-label">
-                    Video Link:
-                  </label>
-                  <input
-                    type="search"
-                    className="form-control"
-                    placeholder="Enter Video Link"
-                    id="editVideoLink"
-                  />
-                </div>
-                <div className="mb-3" id="editImageContainer">
-                  <label htmlFor="message-text" className="col-form-label">
-                    Image:
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control mb-2"
-                    accept="image/*"
-                    id="editImageInput"
-                    onChange={(e) => setImage(e.target.files[0])}
-                  />
-                  <img
-                    src={image ? URL.createObjectURL(image) : ""}
-                    className="img-fluid"
-                    id="editImageView"
-                  />
-                </div>
+                {video && (
+                  <div className="mb-3" id="editVideoContainer">
+                    <label htmlFor="message-text" className="col-form-label">
+                      Video Link:
+                    </label>
+                    <input
+                      type="search"
+                      className="form-control"
+                      placeholder="Enter Video Link"
+                      id="editVideoLink"
+                      value={video}
+                      onChange={(e) => setVideo(e.target.value)}
+                    />
+                  </div>
+                )}
+                {image && (
+                  <div className="mb-3" id="editImageContainer">
+                    <label htmlFor="message-text" className="col-form-label">
+                      Image:
+                    </label>
+                    <input
+                      type="file"
+                      className="form-control mb-2"
+                      accept="image/*"
+                      id="editImageInput"
+                      onChange={(e) => {
+                        setImage(e.target.files[0]);
+                        setISImageURL(false);
+                      }}
+                    />
+                    <img
+                      src={isImageURL ? post.image : URL.createObjectURL(image)}
+                      className="img-fluid"
+                      id="editImageView"
+                    />
+                  </div>
+                )}
                 <input type="text" id="postID" hidden />
               </form>
             </div>

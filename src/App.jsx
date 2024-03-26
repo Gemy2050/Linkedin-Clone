@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import { useEffect } from "react";
 import { userAuth } from "./redux/actions";
 import { useDispatch, useSelector } from "react-redux";
+import Items from "./pages/Items";
 
 function App() {
   const dispatch = useDispatch();
@@ -23,7 +24,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/items" element={<Items />} />
       </Routes>
+
       <div className="loader" id="loader">
         <img src="/images/loader.svg" alt="" />
       </div>

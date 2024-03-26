@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function LeftSide({ user }) {
+  const navigate = useNavigate();
   return (
     <div className="left-side">
       <div style={{ position: "sticky", top: "70px" }}>
@@ -15,7 +17,10 @@ function LeftSide({ user }) {
               Profile Viewer <span className="text-primary">7</span>
             </p>
             <p className="c-secondary">All Analytics</p>
-            <button className="items d-flex align-items-center gap-1">
+            <button
+              className="items d-flex align-items-center gap-1"
+              onClick={() => navigate("/items")}
+            >
               <img src="/images/item-icon.svg" alt="items" />
               My Items
             </button>

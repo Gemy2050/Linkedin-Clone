@@ -81,7 +81,7 @@
 }
 
 
-.home .container .left-side {
+.container .left-side {
   width: 25%;
   position: sticky;
   top: 0;
@@ -164,11 +164,11 @@
   }
 }
 
-.home .container .main {
+.container .main {
   width: 50%;
 }
 
-.home .container .right-side {
+.container .right-side {
   width: 25%;
 
   &>div {
@@ -191,7 +191,7 @@
   }
 }
 
-.home .modal-dialog .share-btns button {
+.modal-dialog .share-btns button {
   transition: .3s;
 
   &:hover {
@@ -242,21 +242,22 @@
   }
 }
 
-.home .posts {
+.posts {
   padding-bottom: 50px;
 }
 
-.home .main .post {
+.main .post {
   background-color: white;
 
   .options {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 15px;
     cursor: pointer;
     transition: .3s;
     padding: 5px;
     border-radius: 50%;
+    z-index: 99;
 
     &:active {
       background-color: #EEE;
@@ -318,7 +319,7 @@
 }
 
 @media (max-width: 991px) {
-  .home .container {
+  .container {
     max-width: 100% !important;
   }
 
@@ -357,7 +358,7 @@
 }
 
 @media (max-width: 767px) {
-  .home .container {
+  .container {
     flex-direction: column;
 
     .post-modal {
