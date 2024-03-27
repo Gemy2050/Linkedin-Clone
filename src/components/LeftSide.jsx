@@ -6,7 +6,7 @@ function LeftSide({ user }) {
   return (
     <div className="left-side">
       <div style={{ position: "sticky", top: "70px" }}>
-        <div className="rounded-3 border overflow-hidden">
+        <div className="rounded-3 border overflow-hidden bg-white">
           <div className="info text-center">
             <div className="bg-img"></div>
             <img src={user?.photoURL} className="rounded-circle" alt="user" />
@@ -26,7 +26,7 @@ function LeftSide({ user }) {
             </button>
           </div>
         </div>
-        <div className="links rounded-3 border mt-2">
+        <div className="links rounded-3 border mt-2 bg-white">
           <p className="text-primary">Links</p>
           <p className="text-primary">Groups</p>
           <p className="text-primary">Hashtags</p>

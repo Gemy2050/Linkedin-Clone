@@ -112,14 +112,17 @@ function Post({ el }) {
         <div className="head p-2 p-sm-3">
           {el?.sharedUser && (
             <div className="alert alert-secondary">
-              <div className="info d-flex gap-2 align-items-center">
+              <div
+                className="info d-flex gap-2 align-items-center"
+                style={{ userSelect: "none" }}
+              >
                 <img
                   src={el?.sharedUser.photoURL}
                   alt="post"
                   className="rounded-circle"
                   loading="lazy"
                 />
-                <div>
+                <div style={{ minWidth: "150px" }}>
                   <h6 className="m-0">{el?.sharedUser.displayName}</h6>
                   <span className="text-secondary">
                     {new Date(el?.sharedUser.date).toLocaleDateString() +
@@ -132,14 +135,17 @@ function Post({ el }) {
               </div>
             </div>
           )}
-          <div className="info d-flex gap-2 align-items-center">
+          <div
+            className="info d-flex gap-2 align-items-center"
+            style={{ userSelect: "none" }}
+          >
             <img
               src={el?.user.photoURL}
               alt="post"
               className="rounded-circle"
               loading="lazy"
             />
-            <div>
+            <div style={{ minWidth: "150px" }}>
               <h6 className="m-0">{el?.user.displayName}</h6>
               <span className="text-secondary">
                 {new Date(el?.user.date).toLocaleDateString() +
@@ -151,7 +157,7 @@ function Post({ el }) {
           <div className="caption mt-2">{el.text}</div>
         </div>
         {el.image ? (
-          <div className="image">
+          <div className="image border-top border-bottom">
             <img
               className="img-fluid w-100"
               src={el.image}
@@ -161,12 +167,12 @@ function Post({ el }) {
           </div>
         ) : (
           el.video && (
-            <div className="video">
+            <div className="video border-bottom">
               <ReactPlayer url={el.video} width={"100%"} controls={true} />
             </div>
           )
         )}
-        <div className="footer px-3 py-2">
+        <div className="footer px-3 py-2" style={{ userSelect: "none" }}>
           <div className="info py-2 border-bottom d-flex gap-3 align-items-center text-secondary">
             <div
               className="likes-count d-flex align-items-center"
@@ -185,7 +191,18 @@ function Post({ el }) {
                 loading="lazy"
               />
             </div>
-            <div className="comments">{el.comments.length} comment</div>
+            <div
+              className="comments"
+              style={{ cursor: "pointer" }}
+              data-bs-toggle="modal"
+              data-bs-target="#postDetails"
+              onClick={() => {
+                dispatch(setPost(el));
+                dispatch(setDetails("comment"));
+              }}
+            >
+              {el.comments.length} comment
+            </div>
             <div className="shares">{el.shares.length} share</div>
           </div>
           <div className="icons pt-2 d-flex align-items-center">

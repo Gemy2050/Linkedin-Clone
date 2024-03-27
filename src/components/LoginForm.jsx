@@ -1,16 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../redux/actions";
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 
 function LoginForm() {
   const { user } = useSelector((state) => state.userState);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const redirectPath = location.state?.path || "/home";
   useEffect(() => {
-    user && navigate("/home", { replace: true });
+    user && navigate(redirectPath, { replace: true });
   }, [user]);
 
   return (

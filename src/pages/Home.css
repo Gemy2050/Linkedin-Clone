@@ -86,10 +86,6 @@
   position: sticky;
   top: 0;
 
-  &>div {
-    background-color: white;
-  }
-
   .bg-img {
     height: 75px;
     background-image: url(../images/card-bg.svg);

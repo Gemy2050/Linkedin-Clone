@@ -46,7 +46,9 @@ function PostDetailsModal({ user }) {
               id="staticBackdropLabel"
             >
               <div
-                className="d-flex align-items-center gap-1"
+                className={`d-flex align-items-center gap-1 pb-2 border-2 border-bottom ${
+                  details == "like" && " border-primary"
+                }`}
                 style={{ cursor: "pointer" }}
                 onClick={() => {
                   dispatch(setDetails("like"));
@@ -60,7 +62,9 @@ function PostDetailsModal({ user }) {
                 />
               </div>
               <div
-                className="d-flex align-items-center gap-1"
+                className={`d-flex align-items-center gap-1 pb-2 border-2 border-bottom ${
+                  details == "comment" && " border-primary"
+                }`}
                 style={{ cursor: "pointer" }}
                 onClick={() => {
                   dispatch(setDetails("comment"));
@@ -115,7 +119,7 @@ function PostDetailsModal({ user }) {
                     return (
                       <div
                         key={el.date}
-                        className="p-2 d-flex align-items-center gap-2 border-bottom mb-2"
+                        className="p-2 d-flex align-items-start gap-2 border-bottom mb-2"
                         style={{ cursor: "pointer" }}
                         ref={commentRef}
                       >

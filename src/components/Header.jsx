@@ -35,7 +35,12 @@ function Header() {
         </div>
         <ul className="right d-flex gap-3 text-center">
           <li>
-            <div className="active text-center">
+            <div
+              className="active text-center"
+              onClick={() => {
+                navigate("/home");
+              }}
+            >
               <img src="/images/nav-home.svg" alt="home" />
               <span className="d-block" style={{ fontSize: "12px" }}>
                 Home
