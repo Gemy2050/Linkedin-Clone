@@ -18,7 +18,7 @@ function Main() {
   return (
     <div className="main">
       <PostModal user={user} />
-      <EditPostForm user={user} />
+      {posts && <EditPostForm user={user} />}
       {posts && <PostDetailsModal user={user} />}
       <div className="posts mt-2">
         {loading && (
@@ -36,4 +36,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default React.memo(Main);

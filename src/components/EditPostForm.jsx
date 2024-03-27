@@ -13,10 +13,14 @@ function EditPostForm({ user }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    setImage("");
     if (post) {
       setText(post.text);
       setVideo(post.video);
+    }
+    if (post?.image) {
       setISImageURL(true);
+      setImage(post.image);
     }
   }, [post]);
 
@@ -140,4 +144,4 @@ function EditPostForm({ user }) {
   );
 }
 
-export default EditPostForm;
+export default React.memo(EditPostForm);

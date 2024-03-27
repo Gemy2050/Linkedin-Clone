@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,9 +15,15 @@ function Post({ el }) {
   const dispatch = useDispatch();
 
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-  const [isLiked, setIsLiked] = useState(
-    el.likes.find((el) => el.uid == user?.uid) ? true : false
-  );
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    if (el.likes.find((el) => el.uid == user?.uid)) {
+      setIsLiked(true);
+    } else {
+      setIsLiked(false);
+    }
+  }, [el]);
 
   const handleDeletePost = () => {
     Swal.fire({
@@ -196,7 +202,11 @@ function Post({ el }) {
               ) : (
                 <img src="/images/like-icon.svg" alt="like" loading="lazy" />
               )}
-              <span className="text-secondary">Like</span>
+              <span
+                className={`${isLiked ? "text-primary" : "text-secondary"}`}
+              >
+                Like
+              </span>
             </button>
             <button
               className="d-flex align-items-center justify-content-center gap-1"
@@ -232,4 +242,4 @@ function Post({ el }) {
   );
 }
 
-export default Post;
+export default React.memo(Post);
