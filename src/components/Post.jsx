@@ -125,9 +125,9 @@ function Post({ el }) {
                 <div style={{ minWidth: "150px" }}>
                   <h6 className="m-0">{el?.sharedUser.displayName}</h6>
                   <span className="text-secondary">
-                    {new Date(el?.sharedUser.date).toLocaleDateString() +
+                    {new Date(el.sharedUser.date).toLocaleDateString() +
                       " - " +
-                      new Date(el?.sharedUser.date)
+                      new Date(el.sharedUser.date)
                         .toLocaleTimeString()
                         .slice(0, -3)}
                   </span>

@@ -24,8 +24,24 @@ import Swal from "sweetalert2";
 export function signIn() {
   return (dispatch) => {
     signInWithPopup(auth, provider)
-      .then((payload) => {
+      .then(async (payload) => {
         dispatch(all.setUser(payload.user));
+
+        let userDoc = await getDoc(doc(db, "users", payload.user.uid));
+        if (!userDoc.exists()) {
+          setDoc(doc(db, "users", payload.user.uid), {
+            user: {
+              displayName: payload.user.displayName,
+              email: payload.user.email,
+              photoURL: payload.user.photoURL,
+              uid: payload.user.uid,
+            },
+            posts: [],
+            items: [],
+            notifications: [],
+            seen: true,
+          });
+        }
       })
       .catch((error) => {
         Swal.fire(error.message, "", "error");
@@ -172,6 +188,32 @@ export const editPost = ({ text, videoLink, image, postID }) => {
   };
 };
 
+function updateNotification(user, post, type) {
+  let postID = post.user.uid + post.user.date;
+  let userToNotify = post.user.uid;
+  if (post.shared) {
+    postID = post.sharedUser.uid + post.sharedUser.date;
+  }
+  if (post.shared) {
+    userToNotify = post.sharedUser.uid;
+  }
+  if (user.uid != userToNotify) {
+    updateDoc(doc(db, "users", userToNotify), {
+      notifications: arrayUnion({
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        uid: user.uid,
+        date: Date.now(),
+        postID,
+        postTitle: post.text,
+        type: type,
+      }),
+      seen: false,
+    });
+  }
+}
+
 export const likePost = (user, post, isLiked) => {
   return async (dispatch) => {
     let postID = post.user.uid + post.user.date;
@@ -187,6 +229,7 @@ export const likePost = (user, post, isLiked) => {
           uid: user.uid,
         }),
       });
+      updateNotification(user, post, "like");
     } else {
       let postDoc = await getDoc(doc(db, "posts", postID));
       let postData = postDoc.data();
@@ -215,6 +258,8 @@ export const commentOnPost = ({ user, post, commentValue }) => {
         comment: commentValue,
       }),
     });
+
+    updateNotification(user, post, "comment");
   };
 };
 
@@ -254,6 +299,15 @@ export const refreshPost = (post) => {
     }
     let postDoc = await getDoc(doc(db, "posts", postID));
     let postData = postDoc.data();
+    dispatch(all.setPost(postData));
+  };
+};
+
+export const getPost = (postID) => {
+  return async (dispatch) => {
+    let postDoc = await getDoc(doc(db, "posts", postID));
+    let postData = postDoc.data();
+    console.log("Post", postData);
     dispatch(all.setPost(postData));
   };
 };

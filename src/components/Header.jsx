@@ -1,10 +1,41 @@
 import { useSelector } from "react-redux";
-import { auth } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { auth, db } from "../firebase";
+import { Link, useNavigate } from "react-router-dom";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 function Header() {
   const { user } = useSelector((state) => state.userState);
   const navigate = useNavigate();
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [seen, setSeen] = useState(true);
+  const [notifiedID, setNotifiedID] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      const unSub = onSnapshot(doc(db, "users", user.uid), (doc) => {
+        setNotifications(
+          doc.data().notifications.sort((a, b) => b.date - a.date)
+        );
+        setSeen(doc.data().seen);
+        setNotifiedID(doc.data().user.uid);
+      });
+
+      return () => {
+        unSub();
+      };
+    }
+  }, []);
+
+  const toggleSeen = () => {
+    if (seen) return;
+
+    updateDoc(doc(db, "users", notifiedID), {
+      seen: true,
+    });
+  };
 
   return (
     <div className="header sticky-top shadow-lg">
@@ -55,12 +86,50 @@ function Header() {
               </span>
             </div>
           </li>
-          <li>
-            <div>
+          <li className="notifications position-relative">
+            <div
+              onClick={() => {
+                setShowNotifications((prev) => !prev);
+                toggleSeen();
+              }}
+            >
               <img src="/images/nav-notifications.svg" alt="notification" />
               <span className="d-block" style={{ fontSize: "12px" }}>
                 Notifications
               </span>
+              {!seen && <span className="notifications-count"></span>}
+            </div>
+            <div
+              className={`list ${
+                showNotifications && "d-block"
+              } position-absolute rounded-3 shadow`}
+            >
+              {notifications.map((el, i) => {
+                return (
+                  <button
+                    key={i}
+                    to={`/postDetails/${el.postID}`}
+                    className="item pb-3 d-flex align-items-center gap-3"
+                  >
+                    <img
+                      src={el.photoURL}
+                      className="rounded-circle"
+                      alt="user"
+                      loading="lazy"
+                    />
+                    <p className="m-0">
+                      {el.displayName}{" "}
+                      {el.type == "comment"
+                        ? "commented on"
+                        : el.type == "like"
+                        ? "likes"
+                        : "shares"}{" "}
+                      your post{" "}
+                      <span className="fw-bold">"{el.postTitle}"</span>
+                    </p>
+                  </button>
+                );
+              })}
             </div>
           </li>
           <li className="position-relative me">

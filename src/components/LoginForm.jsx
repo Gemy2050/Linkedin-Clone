@@ -10,9 +10,8 @@ function LoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const redirectPath = location.state?.path || "/home";
   useEffect(() => {
-    user && navigate(redirectPath, { replace: true });
+    user && navigate("/home", { replace: true });
   }, [user]);
 
   return (
