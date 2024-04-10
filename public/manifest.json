@@ -3,17 +3,17 @@
   "name": "Linkedin Clone",
   "icons": [
     {
-      "src": "./images/login-logo.svg",
+      "src": "./images/linkedin-logo.png",
       "sizes": "64x64",
       "type": "image/x-icon"
     },
     {
-      "src": "./images/login-logo.svg",
+      "src": "./images/linkedin-logo.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "./images/login-logo.svg",
+      "src": "./images/linkedin-logo.png",
       "type": "image/png",
       "sizes": "512x512"
     }

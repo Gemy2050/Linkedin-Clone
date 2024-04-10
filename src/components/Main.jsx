@@ -10,7 +10,7 @@ function Main() {
   const { posts, loading } = useSelector((state) => state.postsState);
 
   useEffect(() => {
-    dispatch(showPosts());
+    dispatch(showPosts("posts"));
   }, []);
 
   return (
@@ -27,7 +27,8 @@ function Main() {
             />
           </div>
         )}
-        {posts.length > 0 && posts.map((post, i) => <Post key={i} el={post} />)}
+        {posts?.length > 0 &&
+          posts.map((post, i) => <Post key={i} el={post} />)}
       </div>
     </div>
   );

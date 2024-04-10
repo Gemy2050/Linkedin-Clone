@@ -13,6 +13,10 @@ function Header() {
   const [seen, setSeen] = useState(true);
   const [notifiedID, setNotifiedID] = useState(null);
 
+  let audio = new Audio(
+    "https://gemy2050.github.io/chat/sound/notification.mp3"
+  );
+
   useEffect(() => {
     if (user) {
       const unSub = onSnapshot(doc(db, "users", user.uid), (doc) => {
@@ -21,6 +25,10 @@ function Header() {
         );
         setSeen(doc.data().seen);
         setNotifiedID(doc.data().user.uid);
+
+        if (!doc.data().seen) {
+          audio.play();
+        }
       });
 
       return () => {

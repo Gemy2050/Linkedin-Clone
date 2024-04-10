@@ -1,17 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import LeftSide from "../components/LeftSide";
 import Header from "../components/Header";
 import RightSide from "../components/RightSide";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import EditPostForm from "../components/EditPostForm";
 import PostDetailsModal from "../components/PostDetailsModal";
 
 import "./Home.css";
 import Post from "../components/Post";
+import { showItems } from "../redux/actions";
 
 function Items() {
   const { user } = useSelector((state) => state.userState);
-  const { posts } = useSelector((state) => state.postsState);
+  const { items } = useSelector((state) => state.itemsState);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    let unSub = dispatch(showItems(user.uid));
+    return () => {
+      unSub();
+    };
+  }, []);
+
+  console.log("items", items);
 
   return (
     <div className="items">
@@ -23,8 +35,8 @@ function Items() {
           <EditPostForm user={user} />
           <PostDetailsModal user={user} />
           <div className="posts mt-2">
-            {/* {posts.length > 0 &&
-              posts.map((post, i) => <Post key={i} el={post} />)} */}
+            {items?.length > 0 &&
+              items.map((post, i) => <Post key={i} el={post} />)}
           </div>
         </div>
         <RightSide />

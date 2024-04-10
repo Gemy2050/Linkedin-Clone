@@ -8,6 +8,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import {
+  arrayRemove,
   arrayUnion,
   collection,
   deleteDoc,
@@ -87,6 +88,7 @@ export function uploadData(data) {
               comments: [],
               shares: [],
               likes: [],
+              saves: [],
               date: Date.now(),
             }).then(() => dispatch(all.setLoading(false)));
           });
@@ -101,6 +103,7 @@ export function uploadData(data) {
         comments: [],
         shares: [],
         likes: [],
+        saves: [],
         date: Date.now(),
       }).then(() => dispatch(all.setLoading(false)));
     }
@@ -309,5 +312,50 @@ export const getPost = (postID) => {
     let postData = postDoc.data();
     console.log("Post", postData);
     dispatch(all.setPost(postData));
+  };
+};
+
+export const saveItem = (user, el) => {
+  return (dispatch) => {
+    updateDoc(doc(db, "posts", user.uid + el.user.date), {
+      saves: arrayUnion(user.uid),
+    });
+
+    updateDoc(doc(db, "users", user.uid), {
+      items: arrayUnion({
+        ...el,
+        saves: [...el.saves, user.uid],
+      }),
+    });
+    Swal.fire("Saved to items", "", "success");
+  };
+};
+
+export const deleteItem = (user, el) => {
+  return async (dispatch) => {
+    let postDoc = await getDoc(doc(db, "users", user.uid));
+    let postData = postDoc.data();
+    let newItems = postData.items.filter((item) => item.date != el.date);
+    updateDoc(doc(db, "users", user.uid), {
+      items: newItems,
+    });
+
+    updateDoc(doc(db, "posts", user.uid + el.user.date), {
+      saves: arrayRemove(user.uid),
+    });
+    Swal.fire("Deleted From items", "", "success");
+  };
+};
+
+export const showItems = (id) => {
+  return (dispatch) => {
+    let data;
+    let unSub = onSnapshot(doc(db, "users", id), (snapshot) => {
+      console.log();
+      data = snapshot.data().items;
+      console.log(data);
+      dispatch(all.getItems(data));
+    });
+    return unSub;
   };
 };

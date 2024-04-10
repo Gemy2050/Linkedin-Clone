@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
+  deleteItem,
   deletePost,
   deleteSharedPost,
   likePost,
+  saveItem,
   sharePost,
 } from "../redux/actions";
 import Swal from "sweetalert2";
@@ -13,6 +16,7 @@ import { setDetails, setPost } from "../redux/actions/actions";
 function Post({ el }) {
   const { user } = useSelector((state) => state.userState);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -87,7 +91,18 @@ function Post({ el }) {
           <img src="/images/ellipsis.svg" alt="options" />
           {showOptionsMenu && (
             <ul className="p-3 rounded-3 shadow">
-              <li className="border-bottom pb-2">Save Post</li>
+              <li
+                className="border-bottom pb-2"
+                onClick={() => {
+                  if (el.saves.includes(user.uid)) {
+                    dispatch(deleteItem(user, el));
+                  } else {
+                    dispatch(saveItem(user, el));
+                  }
+                }}
+              >
+                {el.saves.includes(user.uid) ? "Delete Item" : "Save Item"}
+              </li>
               {((el?.user.uid == user?.uid && !el?.shared) ||
                 el?.sharedUser?.uid == user?.uid) && (
                 <>

@@ -19,6 +19,12 @@ export const getPosts = (payload) => {
     posts: payload,
   };
 };
+export const getItems = (payload) => {
+  return {
+    type: all.GET_ITEMS,
+    items: payload,
+  };
+};
 
 export const setPost = (payload) => {
   return {
