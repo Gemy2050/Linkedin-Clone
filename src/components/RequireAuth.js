@@ -6,8 +6,8 @@ function RequireAuth({ children }) {
   const navigate = useNavigate();
 
   if (!user) {
-    // return navigate("/", { state: { path: window.location.pathname } });
-    return Navigate({ to: "/", state: { path: window.location.pathname } });
+    return navigate("/", { state: { path: window.location.pathname } });
+    // return Navigate({ to: "/", state: { path: window.location.pathname } });
   }
 
   return children;
