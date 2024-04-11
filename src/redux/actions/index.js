@@ -39,6 +39,7 @@ export function signIn() {
             },
             posts: [],
             items: [],
+            connections: [],
             notifications: [],
             seen: true,
           });
@@ -289,7 +290,8 @@ export const sharePost = ({ sharedUser, user, text, video, image }) => {
       comments: [],
       shares: [],
       likes: [],
-      date: Date.now(),
+      saves: [],
+      date: sharedUser.date,
     }).then(() => dispatch(all.setLoading(false)));
   };
 };
@@ -310,14 +312,17 @@ export const getPost = (postID) => {
   return async (dispatch) => {
     let postDoc = await getDoc(doc(db, "posts", postID));
     let postData = postDoc.data();
-    console.log("Post", postData);
     dispatch(all.setPost(postData));
   };
 };
 
 export const saveItem = (user, el) => {
   return (dispatch) => {
-    updateDoc(doc(db, "posts", user.uid + el.user.date), {
+    let theDate = el.user.date;
+    if (el.shared) {
+      theDate = el.sharedUser.date;
+    }
+    updateDoc(doc(db, "posts", user.uid + theDate), {
       saves: arrayUnion(user.uid),
     });
 
@@ -333,6 +338,11 @@ export const saveItem = (user, el) => {
 
 export const deleteItem = (user, el) => {
   return async (dispatch) => {
+    let theDate = el.user.date;
+    if (el.shared) {
+      theDate = el.sharedUser.date;
+    }
+
     let postDoc = await getDoc(doc(db, "users", user.uid));
     let postData = postDoc.data();
     let newItems = postData.items.filter((item) => item.date != el.date);
@@ -340,7 +350,7 @@ export const deleteItem = (user, el) => {
       items: newItems,
     });
 
-    updateDoc(doc(db, "posts", user.uid + el.user.date), {
+    updateDoc(doc(db, "posts", user.uid + theDate), {
       saves: arrayRemove(user.uid),
     });
     Swal.fire("Deleted From items", "", "success");
@@ -349,12 +359,12 @@ export const deleteItem = (user, el) => {
 
 export const showItems = (id) => {
   return (dispatch) => {
+    dispatch(all.setLoading(true));
     let data;
     let unSub = onSnapshot(doc(db, "users", id), (snapshot) => {
-      console.log();
       data = snapshot.data().items;
-      console.log(data);
       dispatch(all.getItems(data));
+      dispatch(all.setLoading(false));
     });
     return unSub;
   };

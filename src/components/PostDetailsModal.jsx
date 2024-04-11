@@ -142,11 +142,13 @@ function PostDetailsModal({ user }) {
                             className="text-secondary"
                             style={{ fontSize: "12px" }}
                           >
-                            {new Date(el.date).toLocaleDateString() +
+                            {new Date(el.date).toLocaleDateString(["en-GB"]) +
                               " - " +
-                              new Date(el.date)
-                                .toLocaleTimeString()
-                                .slice(0, -3)}
+                              new Date(el.date).toLocaleTimeString(["en-GB"], {
+                                hour12: true,
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                           </span>
                         </div>
                       </div>

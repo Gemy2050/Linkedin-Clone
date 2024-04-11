@@ -140,7 +140,9 @@ function Post({ el }) {
                 <div style={{ minWidth: "150px" }}>
                   <h6 className="m-0">{el?.sharedUser.displayName}</h6>
                   <span className="text-secondary">
-                    {new Date(el.sharedUser.date).toLocaleDateString() +
+                    {new Date(el.sharedUser.date).toLocaleDateString([
+                      "en-GB",
+                    ]) +
                       " - " +
                       new Date(el.sharedUser.date)
                         .toLocaleTimeString()
@@ -163,9 +165,13 @@ function Post({ el }) {
             <div style={{ minWidth: "150px" }}>
               <h6 className="m-0">{el?.user.displayName}</h6>
               <span className="text-secondary">
-                {new Date(el?.user.date).toLocaleDateString() +
+                {new Date(el?.user.date).toLocaleDateString(["en-GB"]) +
                   " - " +
-                  new Date(el?.user.date).toLocaleTimeString().slice(0, -3)}
+                  new Date(el?.user.date).toLocaleTimeString(["en-GB"], {
+                    hour12: true,
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
               </span>
             </div>
           </div>
@@ -200,11 +206,7 @@ function Post({ el }) {
               }}
             >
               <span className="me-1">{el.likes.length}</span>
-              <img
-                src="https://static-exp1.licdn.com/sc/h/2uxqgankkcxm505qn812vqyss"
-                alt="likes"
-                loading="lazy"
-              />
+              <img src="/images/liked.svg" alt="likes" loading="lazy" />
             </div>
             <div
               className="comments"
@@ -226,11 +228,7 @@ function Post({ el }) {
               onClick={handleIsLike}
             >
               {isLiked ? (
-                <img
-                  src="https://static-exp1.licdn.com/sc/h/2uxqgankkcxm505qn812vqyss"
-                  alt="likes"
-                  loading="lazy"
-                />
+                <img src="/images/liked.svg" alt="likes" loading="lazy" />
               ) : (
                 <img src="/images/like-icon.svg" alt="like" loading="lazy" />
               )}
@@ -263,10 +261,6 @@ function Post({ el }) {
               <img src="/images/share-icon.svg" alt="share" loading="lazy" />
               <span className="text-secondary">Share</span>
             </button>
-            {/* <button className="d-flex align-items-center justify-content-center gap-1">
-              <img src="/images/send-icon.svg" alt="send" loading="lazy" />
-              <span className="text-secondary">Send</span>
-            </button> */}
           </div>
         </div>
       </div>

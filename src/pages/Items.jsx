@@ -12,18 +12,17 @@ import { showItems } from "../redux/actions";
 
 function Items() {
   const { user } = useSelector((state) => state.userState);
-  const { items } = useSelector((state) => state.itemsState);
+  let { items, loading } = useSelector((state) => state.itemsState);
+  items.sort((a, b) => b.date - a.date);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    let unSub = dispatch(showItems(user.uid));
+    let unSub = dispatch(showItems(user?.uid));
     return () => {
       unSub();
     };
   }, []);
-
-  console.log("items", items);
 
   return (
     <div className="items">
@@ -35,6 +34,16 @@ function Items() {
           <EditPostForm user={user} />
           <PostDetailsModal user={user} />
           <div className="posts mt-2">
+            {loading && (
+              <div className="text-center">
+                <img
+                  src="/images/loader.svg"
+                  alt="loader"
+                  style={{ width: "60px" }}
+                />
+              </div>
+            )}
+
             {items?.length > 0 &&
               items.map((post, i) => <Post key={i} el={post} />)}
           </div>

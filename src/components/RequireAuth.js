@@ -1,11 +1,13 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function RequireAuth({ children }) {
   const { user } = useSelector((state) => state.userState);
+  const navigate = useNavigate();
 
   if (!user) {
-    // return <Navigate to="/" state={{ path: window.location.pathname }} />;
+    // return navigate("/", { state: { path: window.location.pathname } });
+    return Navigate({ to: "/", state: { path: window.location.pathname } });
   }
 
   return children;
