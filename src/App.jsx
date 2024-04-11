@@ -1,23 +1,18 @@
-import { Route, Routes, useNavigate } from "react-router";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import { useEffect } from "react";
 import { userAuth } from "./redux/actions";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Items from "./pages/Items";
 import RequireAuth from "./components/RequireAuth";
 
 function App() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { user } = useSelector((state) => state.userState);
 
   useEffect(() => {
     dispatch(userAuth());
-    // if (!user) {
-    //   navigate("/", { replace: true });
-    // }
   }, []);
 
   return (
