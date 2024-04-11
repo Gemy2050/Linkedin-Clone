@@ -153,7 +153,7 @@ export const deleteSharedPost = (sharedUser) => {
 export const editPost = ({ text, videoLink, image, postID }) => {
   return (dispatch) => {
     dispatch(all.setLoading(true));
-    if (image) {
+    if (typeof image == "object") {
       const imgRef = ref(storage, `images/${postID}`);
       // Delete Old Image
       deleteObject(imgRef).then(() => {
