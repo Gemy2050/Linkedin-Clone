@@ -7,6 +7,7 @@ import { userAuth } from "./redux/actions";
 import { useDispatch } from "react-redux";
 import Items from "./pages/Items";
 import RequireAuth from "./components/RequireAuth";
+import Profile from "./pages/Profile";
 
 function App() {
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ function App() {
             </RequireAuth>
           }
         />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
 
       <div className="loader" id="loader">

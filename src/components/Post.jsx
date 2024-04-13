@@ -101,7 +101,9 @@ function Post({ el }) {
                   }
                 }}
               >
-                {el.saves.includes(user.uid) ? "Delete Item" : "Save Item"}
+                {el.saves.includes(user.uid)
+                  ? "Remove from items"
+                  : "Save to items"}
               </li>
               {((el?.user.uid == user?.uid && !el?.shared) ||
                 el?.sharedUser?.uid == user?.uid) && (
@@ -126,7 +128,7 @@ function Post({ el }) {
         </div>
         <div className="head p-2 p-sm-3">
           {el?.sharedUser && (
-            <div className="alert alert-secondary">
+            <div className="alert alert-secondary p-2">
               <div
                 className="info d-flex gap-2 align-items-center"
                 style={{ userSelect: "none" }}
@@ -144,9 +146,14 @@ function Post({ el }) {
                       "en-GB",
                     ]) +
                       " - " +
-                      new Date(el.sharedUser.date)
-                        .toLocaleTimeString()
-                        .slice(0, -3)}
+                      new Date(el.sharedUser.date).toLocaleTimeString(
+                        ["en-GB"],
+                        {
+                          hour12: true,
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )}
                   </span>
                 </div>
               </div>

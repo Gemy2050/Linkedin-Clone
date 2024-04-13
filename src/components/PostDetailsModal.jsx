@@ -55,7 +55,7 @@ function PostDetailsModal({ user }) {
                 }}
               >
                 <span>{post?.likes?.length}</span>
-                <img src="/images/liked.png" alt="likes" loading="lazy" />
+                <img src="/images/liked.svg" alt="likes" loading="lazy" />
               </div>
               <div
                 className={`d-flex align-items-center gap-1 pb-2 border-2 border-bottom ${

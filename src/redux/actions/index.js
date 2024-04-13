@@ -319,10 +319,13 @@ export const getPost = (postID) => {
 export const saveItem = (user, el) => {
   return (dispatch) => {
     let theDate = el.user.date;
+    let userID = el.user.uid;
     if (el.shared) {
       theDate = el.sharedUser.date;
+      userID = el.sharedUser.uid;
     }
-    updateDoc(doc(db, "posts", user.uid + theDate), {
+
+    updateDoc(doc(db, "posts", userID + theDate), {
       saves: arrayUnion(user.uid),
     });
 
@@ -339,8 +342,10 @@ export const saveItem = (user, el) => {
 export const deleteItem = (user, el) => {
   return async (dispatch) => {
     let theDate = el.user.date;
+    let userID = el.user.uid;
     if (el.shared) {
       theDate = el.sharedUser.date;
+      userID = el.sharedUser.uid;
     }
 
     let postDoc = await getDoc(doc(db, "users", user.uid));
@@ -350,7 +355,7 @@ export const deleteItem = (user, el) => {
       items: newItems,
     });
 
-    updateDoc(doc(db, "posts", user.uid + theDate), {
+    updateDoc(doc(db, "posts", userID + theDate), {
       saves: arrayRemove(user.uid),
     });
     Swal.fire("Deleted From items", "", "success");

@@ -9,8 +9,13 @@ function LeftSide({ user }) {
         <div className="rounded-3 border overflow-hidden bg-white">
           <div className="info text-center">
             <div className="bg-img"></div>
-            <img src={user?.photoURL} className="rounded-circle" alt="user" />
-            <h6>{user?.displayName}</h6>
+            <img
+              src={user?.photoURL}
+              className="rounded-circle"
+              alt="user"
+              onClick={() => navigate("/profile")}
+            />
+            <h6 onClick={() => navigate("/profile")}>{user?.displayName}</h6>
           </div>
           <div className="items">
             <p className="d-flex justify-content-between c-secondary">
