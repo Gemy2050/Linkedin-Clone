@@ -77,6 +77,7 @@ function App() {
           right: "-50px",
           bottom: "15px",
           transition: ".5s",
+          zIndex: "1000",
         }}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
