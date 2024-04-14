@@ -38,3 +38,9 @@ input:focus {
   background-color: #0075ff;
   border-radius: 6px;
 }
+
+@media (max-width: 767px) {
+  #scroll {
+    bottom: 60px !important;
+  }
+}

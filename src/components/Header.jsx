@@ -156,11 +156,19 @@ function Header() {
                 />
               </span>
             </div>
-            <div
-              className="sign-out"
-              onClick={async () => await auth.signOut()}
-            >
-              Sign out
+            <div className="sign-out">
+              <p
+                className="m-0 pb-1 border-bottom"
+                onClick={() => navigate("/profile")}
+              >
+                Profile
+              </p>
+              <span
+                className="pt-1 d-block"
+                onClick={async () => await auth.signOut()}
+              >
+                Sign out
+              </span>
             </div>
           </li>
         </ul>

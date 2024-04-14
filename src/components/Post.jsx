@@ -138,9 +138,15 @@ function Post({ el }) {
                   alt="post"
                   className="rounded-circle"
                   loading="lazy"
+                  onClick={() => navigate(`/profile/${el?.sharedUser.uid}`)}
                 />
                 <div style={{ minWidth: "150px" }}>
-                  <h6 className="m-0">{el?.sharedUser.displayName}</h6>
+                  <h6
+                    className="m-0"
+                    onClick={() => navigate(`/profile/${el?.sharedUser.uid}`)}
+                  >
+                    {el?.sharedUser.displayName}
+                  </h6>
                   <span className="text-secondary">
                     {new Date(el.sharedUser.date).toLocaleDateString([
                       "en-GB",
@@ -168,9 +174,15 @@ function Post({ el }) {
               alt="post"
               className="rounded-circle"
               loading="lazy"
+              onClick={() => navigate(`/profile/${el?.user.uid}`)}
             />
             <div style={{ minWidth: "150px" }}>
-              <h6 className="m-0">{el?.user.displayName}</h6>
+              <h6
+                className="m-0"
+                onClick={() => navigate(`/profile/${el?.user.uid}`)}
+              >
+                {el?.user.displayName}
+              </h6>
               <span className="text-secondary">
                 {new Date(el?.user.date).toLocaleDateString(["en-GB"]) +
                   " - " +

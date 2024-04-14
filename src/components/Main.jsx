@@ -10,7 +10,7 @@ function Main() {
   const { posts, loading } = useSelector((state) => state.postsState);
 
   useEffect(() => {
-    dispatch(showPosts("posts"));
+    // dispatch(showPosts());
   }, []);
 
   return (
