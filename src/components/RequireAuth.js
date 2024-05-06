@@ -8,6 +8,7 @@ function RequireAuth({ children }) {
   if (!user) {
     return navigate("/", { state: { path: window.location.pathname } });
     // return Navigate({ to: "/", state: { path: window.location.pathname } });
+    // return <Navigate to="/register" state={{ path: location.pathname }} />;
   }
 
   return children;

@@ -87,7 +87,11 @@ function Header() {
             </div>
           </li>
           <li>
-            <div>
+            <div
+              onClick={() => {
+                alert("Not Available Now");
+              }}
+            >
               <img src="/images/nav-network.svg" alt="my network" />
               <span className="d-block" style={{ fontSize: "12px" }}>
                 My Network

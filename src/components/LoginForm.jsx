@@ -10,9 +10,10 @@ function LoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const redirectPath = location.state?.path || "/home";
+  let redirectPath = location.state?.path || "/home";
 
   useEffect(() => {
+    if (redirectPath == "/") redirectPath = "/home";
     user && navigate(redirectPath, { replace: true });
   }, [user]);
 
@@ -49,12 +50,15 @@ function LoginForm() {
           show
         </span>
       </div>
-      <span className="text-primary" style={{ cursor: "pointer" }}>
+      {/* <span className="text-primary" style={{ cursor: "pointer" }}>
         Forget Password
-      </span>
+      </span> */}
       <button
-        className="mt-4 rounded-5 btn btn-primary d-block w-100"
-        style={{ padding: "12px" }}
+        className="mt-3 rounded-5 btn btn-primary d-block w-100"
+        style={{ padding: "8px" }}
+        onClick={() => {
+          alert("Not available now, Please login with Google");
+        }}
       >
         Sign in
       </button>
@@ -73,7 +77,7 @@ function LoginForm() {
         </span>
       </div>
       <button
-        className="googleBtn btn bg-light w-100 mt-3 rounded-pill border border-black"
+        className="googleBtn btn bg-light w-100 mt-2 rounded-pill border border-black"
         onClick={() => dispatch(signIn())}
       >
         <img

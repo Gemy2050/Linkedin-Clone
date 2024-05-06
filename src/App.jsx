@@ -4,10 +4,11 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import { useEffect } from "react";
 import { showPosts, userAuth } from "./redux/actions";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Items from "./pages/Items";
 import RequireAuth from "./components/RequireAuth";
 import Profile from "./pages/Profile";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/signin" element={<LoginPage />} />
         <Route
           path="/home"
           element={
