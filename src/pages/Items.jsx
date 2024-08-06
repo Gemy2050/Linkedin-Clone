@@ -1,3 +1,4 @@
+import "./Home.css";
 import React, { useEffect } from "react";
 import LeftSide from "../components/LeftSide";
 import Header from "../components/Header";
@@ -6,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import EditPostForm from "../components/EditPostForm";
 import PostDetailsModal from "../components/PostDetailsModal";
 
-import "./Home.css";
 import Post from "../components/Post";
 import { showItems } from "../redux/actions";
 

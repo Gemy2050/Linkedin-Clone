@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setDetails } from "../redux/actions/actions";
 import { commentOnPost, refreshPost } from "../redux/actions";
+import { getDate } from "../utils/functions";
+import { useNavigate } from "react-router-dom";
 
 function PostDetailsModal({ user }) {
   const { post, details } = useSelector((state) => state.postState);
@@ -9,7 +11,7 @@ function PostDetailsModal({ user }) {
 
   const dispatch = useDispatch();
   const [commentValue, setCommentValue] = useState("");
-
+  const navigate = useNavigate();
   const commentRef = useRef();
 
   useEffect(() => {
@@ -93,6 +95,8 @@ function PostDetailsModal({ user }) {
                       key={el.uid}
                       className="p-2 d-flex align-items-center gap-2 border-bottom"
                       style={{ cursor: "pointer" }}
+                      data-bs-dismiss="modal"
+                      onClick={() => navigate("/profile/" + el.uid)}
                     >
                       <img
                         src={el.photoURL}
@@ -125,9 +129,16 @@ function PostDetailsModal({ user }) {
                           loading="lazy"
                           className="rounded-circle"
                           style={{ width: "40px" }}
+                          data-bs-dismiss="modal"
+                          onClick={() => navigate("/profile/" + el.uid)}
                         />
                         <div>
-                          <span>{el.displayName}</span>
+                          <span
+                            data-bs-dismiss="modal"
+                            onClick={() => navigate("/profile/" + el.uid)}
+                          >
+                            {el.displayName}
+                          </span>
                           <p
                             className="m-0 bg-dark text-white px-3 py-2 rounded-3"
                             style={{ fontSize: "14px" }}
@@ -138,7 +149,7 @@ function PostDetailsModal({ user }) {
                             className="text-secondary"
                             style={{ fontSize: "12px" }}
                           >
-                            {new Date(el.date).toLocaleDateString(["en-GB"]) +
+                            {getDate(el.date) +
                               " - " +
                               new Date(el.date).toLocaleTimeString(["en-GB"], {
                                 hour12: true,

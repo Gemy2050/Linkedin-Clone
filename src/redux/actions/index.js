@@ -21,6 +21,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import Swal from "sweetalert2";
+import { notify, showToastForPromise } from "../../utils/functions.js";
 
 export function signIn() {
   return (dispatch) => {
@@ -64,15 +65,23 @@ export function userAuth() {
   };
 }
 
+// Create New Post
 export function uploadData(data) {
   return async (dispatch) => {
     dispatch(all.setLoading(true));
+    let options = {
+      loading: "Creating post...",
+      success: "Post created successfully",
+      error: "Error while creating post",
+    };
+
     if (data.image) {
       const storageRef = ref(
         storage,
         `images/${data.user.uid}${data.user.date}`
       );
       const uploadImage = uploadBytesResumable(storageRef, data.image);
+      showToastForPromise(uploadImage, options, { id: "post" });
       uploadImage.on(
         "state_changed",
         (snapshot) => {},
@@ -96,21 +105,26 @@ export function uploadData(data) {
         }
       );
     } else {
-      setDoc(doc(db, "posts", data.user.uid + data.user.date), {
-        user: data.user,
-        text: data.text,
-        image: data.image,
-        video: data.video,
-        comments: [],
-        shares: [],
-        likes: [],
-        saves: [],
-        date: Date.now(),
-      }).then(() => dispatch(all.setLoading(false)));
+      let uploadPost = setDoc(
+        doc(db, "posts", data.user.uid + data.user.date),
+        {
+          user: data.user,
+          text: data.text,
+          image: data.image,
+          video: data.video,
+          comments: [],
+          shares: [],
+          likes: [],
+          saves: [],
+          date: Date.now(),
+        }
+      ).then(() => dispatch(all.setLoading(false)));
+      showToastForPromise(uploadPost, options, { id: "post" });
     }
   };
 }
 
+// Show Posts in Home Page
 export const showPosts = () => {
   return (dispatch) => {
     const collectionRef = collection(db, "posts");
@@ -126,9 +140,10 @@ export const showPosts = () => {
 export const deletePost = ({ user, image }) => {
   return (dispatch) => {
     dispatch(all.setLoading(true));
-    deleteDoc(doc(db, "posts", user.uid + user.date)).then(() =>
-      dispatch(all.setLoading(false))
-    );
+    deleteDoc(doc(db, "posts", user.uid + user.date)).then(() => {
+      dispatch(all.setLoading(false));
+      notify("success", "Post Deleted Successfully");
+    });
 
     if (image) {
       const imgRef = ref(storage, `images/${user.uid}${user.date}`);
@@ -136,6 +151,7 @@ export const deletePost = ({ user, image }) => {
       // Delete the file
       deleteObject(imgRef).then(() => {
         // File deleted successfully
+        console.log("File deleted successfully");
       });
     }
   };
@@ -176,6 +192,7 @@ export const editPost = ({ text, videoLink, image, postID }) => {
               image: downloadURL,
             }).then(() => {
               dispatch(all.setLoading(false));
+              notify("success", "Post Updated Successfully");
             });
           });
         }
@@ -185,10 +202,11 @@ export const editPost = ({ text, videoLink, image, postID }) => {
         video: videoLink,
         text: text,
       }).then(() => {
+        notify("success", "Post Updated Successfully");
         dispatch(all.setLoading(false));
       });
     }
-    Swal.fire("Post Update", "", "success");
+    // Swal.fire("Post Update", "", "success");
   };
 };
 
@@ -235,9 +253,7 @@ export const likePost = (user, post, isLiked) => {
       });
       updateNotification(user, post, "like");
     } else {
-      let postDoc = await getDoc(doc(db, "posts", postID));
-      let postData = postDoc.data();
-      let newLikes = postData.likes.filter((el) => el.uid != user.uid);
+      let newLikes = post.likes.filter((el) => el.uid != user.uid);
 
       updateDoc(doc(db, "posts", postID), {
         likes: newLikes,
@@ -317,7 +333,7 @@ export const getPost = (postID) => {
 };
 
 export const saveItem = (user, el) => {
-  return (dispatch) => {
+  return async (dispatch) => {
     let theDate = el.user.date;
     let userID = el.user.uid;
     if (el.shared) {
@@ -329,13 +345,20 @@ export const saveItem = (user, el) => {
       saves: arrayUnion(user.uid),
     });
 
-    updateDoc(doc(db, "users", user.uid), {
+    let myPromise = updateDoc(doc(db, "users", user.uid), {
       items: arrayUnion({
         ...el,
         saves: [...el.saves, user.uid],
       }),
     });
-    Swal.fire("Saved to items", "", "success");
+
+    let messages = {
+      loading: "Saving...",
+      success: "Post Saved To Items",
+      error: "Error while saving",
+    };
+    let options = { id: "items", duration: 3000 };
+    showToastForPromise(myPromise, messages, options);
   };
 };
 
@@ -351,14 +374,20 @@ export const deleteItem = (user, el) => {
     let postDoc = await getDoc(doc(db, "users", user.uid));
     let postData = postDoc.data();
     let newItems = postData.items.filter((item) => item.date != el.date);
-    updateDoc(doc(db, "users", user.uid), {
-      items: newItems,
-    });
-
     updateDoc(doc(db, "posts", userID + theDate), {
       saves: arrayRemove(user.uid),
     });
-    Swal.fire("Deleted From items", "", "success");
+    let promise = updateDoc(doc(db, "users", user.uid), {
+      items: newItems,
+    });
+
+    let messages = {
+      loading: "Removing...",
+      success: "Post Removed From Items",
+      error: "Error while deleting",
+    };
+    let options = { id: "items" };
+    showToastForPromise(promise, messages, options);
   };
 };
 

@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 
 function Profile() {
   let { posts } = useSelector((state) => state.postsState);
+  let { items } = useSelector((state) => state.itemsState);
   let currentUser = useSelector((state) => state.userState.user);
   let [user, setUser] = useState({});
   let { id } = useParams();
@@ -72,7 +73,7 @@ function Profile() {
                 </p>
               </div>
               <div>
-                <span className="text-primary">0 items</span>
+                <span className="text-primary">{items.length} items</span>
                 <p className="w-7" style={{ fontSize: "14px" }}>
                   browse your items
                 </p>

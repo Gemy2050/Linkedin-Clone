@@ -27,13 +27,14 @@
 
 .header ul li.me .sign-out {
   position: absolute;
-  background-color: #fff;
   padding: 8px;
   width: 80px;
   font-size: 13px;
   border-radius: 4px;
   top: 102%;
   animation: fadeIn .5s linear alternate;
+  background-color: #333;
+  color: #FFF;
   display: none;
 }
 
@@ -109,7 +110,6 @@
 
   .header ul li.me .sign-out {
     top: -150%;
-    background-color: #EEE;
   }
 }
 
@@ -326,20 +326,28 @@
     }
   }
 
-  .head .info {
-    img {
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
+  .head {
+    .share {
+      padding: 5px !important;
     }
 
-    h6 {
-      font-weight: bold;
-      cursor: pointer;
-    }
+    .info {
+      padding: 10px !important;
 
-    span {
-      font-size: 14px;
+      img {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+      }
+
+      h6 {
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      span {
+        font-size: 14px;
+      }
     }
   }
 
@@ -361,7 +369,7 @@
       }
 
       img {
-        width: 30px;
+        width: 25px;
       }
     }
 
@@ -453,5 +461,15 @@
     img {
       width: 20px !important;
     }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
   }
 }

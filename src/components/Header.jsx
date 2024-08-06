@@ -154,7 +154,7 @@ function Header() {
               <span className="d-block" style={{ fontSize: "12px" }}>
                 Me
                 <img
-                  src="images/down-icon.svg"
+                  src="/images/down-icon.svg"
                   alt="arrow"
                   style={{ width: "15px", marginLeft: "5px" }}
                 />

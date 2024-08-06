@@ -9,6 +9,7 @@ import Items from "./pages/Items";
 import RequireAuth from "./components/RequireAuth";
 import Profile from "./pages/Profile";
 import LoginPage from "./pages/LoginPage";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const dispatch = useDispatch();
@@ -74,17 +75,15 @@ function App() {
       </div>
       <button
         id="scroll"
-        className={`btn btn-sm btn-primary position-fixed`}
-        style={{
-          right: "-50px",
-          bottom: "15px",
-          transition: ".5s",
-          zIndex: "1000",
-        }}
+        className={`btn btn-sm btn-primary`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
         up
       </button>
+
+      <Toaster
+        toastOptions={{ style: { background: "#333", color: "#fff" } }}
+      />
     </div>
   );
 }

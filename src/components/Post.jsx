@@ -12,6 +12,7 @@ import {
 } from "../redux/actions";
 import Swal from "sweetalert2";
 import { setDetails, setPost } from "../redux/actions/actions";
+import { getDate } from "../utils/functions.js";
 
 function Post({ el }) {
   const { user } = useSelector((state) => state.userState);
@@ -126,9 +127,9 @@ function Post({ el }) {
             </ul>
           )}
         </div>
-        <div className="head p-2 p-sm-3">
+        <div className="head">
           {el?.sharedUser && (
-            <div className="alert alert-secondary p-2">
+            <div className="share p-2 border-bottom">
               <div
                 className="info d-flex gap-2 align-items-center"
                 style={{ userSelect: "none" }}
@@ -148,9 +149,7 @@ function Post({ el }) {
                     {el?.sharedUser.displayName}
                   </h6>
                   <span className="text-secondary">
-                    {new Date(el.sharedUser.date).toLocaleDateString([
-                      "en-GB",
-                    ]) +
+                    {getDate(el.sharedUser.date) +
                       " - " +
                       new Date(el.sharedUser.date).toLocaleTimeString(
                         ["en-GB"],
@@ -166,7 +165,9 @@ function Post({ el }) {
             </div>
           )}
           <div
-            className="info d-flex gap-2 align-items-center"
+            className={`user info p-2 d-flex gap-2 align-items-center ${
+              !el.shared && "border-bottom"
+            }`}
             style={{ userSelect: "none" }}
           >
             <img
@@ -184,7 +185,7 @@ function Post({ el }) {
                 {el?.user.displayName}
               </h6>
               <span className="text-secondary">
-                {new Date(el?.user.date).toLocaleDateString(["en-GB"]) +
+                {getDate(el?.user.date) +
                   " - " +
                   new Date(el?.user.date).toLocaleTimeString(["en-GB"], {
                     hour12: true,
@@ -194,15 +195,16 @@ function Post({ el }) {
               </span>
             </div>
           </div>
-          <div className="caption mt-2">{el.text}</div>
+          <div className="caption mt-2 p-2">{el.text}</div>
         </div>
         {el.image ? (
-          <div className="image border-top border-bottom">
+          <div className="image">
             <img
               className="img-fluid w-100"
               src={el.image}
               alt="post"
               loading="lazy"
+              onError={(e) => (e.target.src = "/images/image-failed.png")}
             />
           </div>
         ) : (
@@ -254,7 +256,7 @@ function Post({ el }) {
               <span
                 className={`${isLiked ? "text-primary" : "text-secondary"}`}
               >
-                Like
+                {isLiked ? "Liked" : "Like"}
               </span>
             </button>
             <button

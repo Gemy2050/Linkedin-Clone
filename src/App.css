@@ -19,3 +19,11 @@
     width: 100px;
   }
 }
+
+button#scroll {
+  position: fixed;
+  right: -50px;
+  bottom: 15px;
+  transition: .5s;
+  z-index: 1000;
+}
