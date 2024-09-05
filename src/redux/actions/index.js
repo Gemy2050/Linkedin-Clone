@@ -47,7 +47,7 @@ export function signIn() {
         }
       })
       .catch((error) => {
-        Swal.fire(error.message, "", "error");
+        console.log(error.message);
       });
   };
 }

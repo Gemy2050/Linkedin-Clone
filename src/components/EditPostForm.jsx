@@ -111,7 +111,9 @@ function EditPostForm({ user }) {
                       }}
                     />
                     <img
-                      src={isImageURL ? post.image : URL.createObjectURL(image)}
+                      src={
+                        isImageURL ? post?.image : URL.createObjectURL(image)
+                      }
                       className="img-fluid"
                       id="editImageView"
                     />

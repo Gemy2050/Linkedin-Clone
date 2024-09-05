@@ -19,18 +19,6 @@ function App() {
     dispatch(showPosts());
   }, []);
 
-  window.onscroll = () => {
-    if (window.scrollY > 2000) {
-      document
-        .querySelector("#scroll")
-        .style.setProperty("right", "15px", "important");
-    } else {
-      document
-        .querySelector("#scroll")
-        .style.setProperty("right", "-50px", "important");
-    }
-  };
-
   return (
     <div className="App">
       <Routes>
@@ -89,3 +77,15 @@ function App() {
 }
 
 export default App;
+
+window.onscroll = () => {
+  if (window.scrollY > 2000) {
+    document
+      .querySelector("#scroll")
+      .style.setProperty("right", "15px", "important");
+  } else {
+    document
+      .querySelector("#scroll")
+      .style.setProperty("right", "-50px", "important");
+  }
+};
