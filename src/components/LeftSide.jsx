@@ -1,8 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 function LeftSide({ user }) {
   const navigate = useNavigate();
+  let { items } = useSelector((state) => state.itemsState);
+
   return (
     <div className="left-side">
       <div style={{ position: "sticky", top: "70px" }}>
@@ -19,7 +22,7 @@ function LeftSide({ user }) {
           </div>
           <div className="items">
             <p className="d-flex justify-content-between c-secondary">
-              Profile Viewer <span className="text-primary">7</span>
+              Profile Viewers <span className="text-primary">0</span>
             </p>
             <p className="c-secondary">All Analytics</p>
             <button
@@ -28,6 +31,7 @@ function LeftSide({ user }) {
             >
               <img src="/images/item-icon.svg" alt="items" />
               My Items
+              <span className="ms-auto text-primary">{items?.length}</span>
             </button>
           </div>
         </div>

@@ -1,5 +1,4 @@
 // *** Toast Notification ***
-
 import toast from "react-hot-toast";
 
 export const notify = (type, message, duration = 3000) =>

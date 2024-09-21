@@ -55,7 +55,8 @@ function LoginForm() {
       </span> */}
       <button
         className="mt-3 rounded-5 btn btn-primary d-block w-100"
-        style={{ padding: "8px" }}
+        style={{ padding: "8px", cursor: "no-drop" }}
+        disabled
         onClick={() => {
           alert("Not available now, Please login with Google");
         }}

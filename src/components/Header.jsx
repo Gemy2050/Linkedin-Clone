@@ -3,6 +3,7 @@ import { auth, db } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import NotificationItem from "./NotificationItem";
 
 function Header() {
   const { user } = useSelector((state) => state.userState);
@@ -44,6 +45,10 @@ function Header() {
       seen: true,
     });
   };
+
+  window.addEventListener("click", () => {
+    setShowNotifications(false);
+  });
 
   return (
     <div className="header sticky-top shadow-lg">
@@ -100,7 +105,8 @@ function Header() {
           </li>
           <li className="notifications position-relative">
             <div
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setShowNotifications((prev) => !prev);
                 toggleSeen();
               }}
@@ -111,38 +117,15 @@ function Header() {
               </span>
               {!seen && <span className="notifications-count"></span>}
             </div>
-            <div
-              className={`list ${
-                showNotifications && "d-block"
-              } position-absolute rounded-3 shadow`}
-            >
-              {notifications.map((el, i) => {
-                return (
-                  <button
-                    key={i}
-                    to={`/postDetails/${el.postID}`}
-                    className="item pb-3 d-flex align-items-center gap-3"
-                  >
-                    <img
-                      src={el.photoURL}
-                      className="rounded-circle"
-                      alt="user"
-                      loading="lazy"
-                    />
-                    <p className="m-0">
-                      {el.displayName}{" "}
-                      {el.type == "comment"
-                        ? "commented on"
-                        : el.type == "like"
-                        ? "likes"
-                        : "shares"}{" "}
-                      your post{" "}
-                      <span className="fw-bold">"{el.postTitle}"</span>
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
+            {showNotifications && (
+              <div
+                className={`list d-block position-absolute rounded-3 shadow`}
+              >
+                {notifications.map((el, i) => {
+                  return <NotificationItem el={el} key={i} />;
+                })}
+              </div>
+            )}
           </li>
           <li className="position-relative me">
             <div>

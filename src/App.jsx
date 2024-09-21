@@ -3,15 +3,29 @@ import "./App.css";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import { useEffect } from "react";
-import { showPosts, userAuth } from "./redux/actions";
-import { useDispatch } from "react-redux";
+import { showItems, showPosts, userAuth } from "./redux/actions";
+import { useDispatch, useSelector } from "react-redux";
 import Items from "./pages/Items";
 import RequireAuth from "./components/RequireAuth";
 import Profile from "./pages/Profile";
 import LoginPage from "./pages/LoginPage";
 import { Toaster } from "react-hot-toast";
+import ScrollToTop from "./components/FixScroll";
+
+window.onscroll = () => {
+  if (window.scrollY > 2000) {
+    document
+      .querySelector("#scroll")
+      .style.setProperty("right", "15px", "important");
+  } else {
+    document
+      .querySelector("#scroll")
+      .style.setProperty("right", "-50px", "important");
+  }
+};
 
 function App() {
+  const { user } = useSelector((state) => state.userState);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -19,8 +33,15 @@ function App() {
     dispatch(showPosts());
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      dispatch(showItems(user?.uid));
+    }
+  }, [user]);
+
   return (
     <div className="App">
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signin" element={<LoginPage />} />
@@ -77,15 +98,3 @@ function App() {
 }
 
 export default App;
-
-window.onscroll = () => {
-  if (window.scrollY > 2000) {
-    document
-      .querySelector("#scroll")
-      .style.setProperty("right", "15px", "important");
-  } else {
-    document
-      .querySelector("#scroll")
-      .style.setProperty("right", "-50px", "important");
-  }
-};

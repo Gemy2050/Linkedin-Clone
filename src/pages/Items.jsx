@@ -1,28 +1,18 @@
 import "./Home.css";
-import React, { useEffect } from "react";
+import React from "react";
 import LeftSide from "../components/LeftSide";
 import Header from "../components/Header";
 import RightSide from "../components/RightSide";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import EditPostForm from "../components/EditPostForm";
 import PostDetailsModal from "../components/PostDetailsModal";
 
 import Post from "../components/Post";
-import { showItems } from "../redux/actions";
 
 function Items() {
   const { user } = useSelector((state) => state.userState);
   let { items, loading } = useSelector((state) => state.itemsState);
-  items.sort((a, b) => b.date - a.date);
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    let unSub = dispatch(showItems(user?.uid));
-    return () => {
-      unSub();
-    };
-  }, []);
+  items?.sort((a, b) => b.date - a.date);
 
   return (
     <div className="items">

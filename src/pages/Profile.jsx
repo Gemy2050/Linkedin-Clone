@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import Post from "../components/Post";
 import PostDetailsModal from "../components/PostDetailsModal";
 import EditPostForm from "../components/EditPostForm";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -73,7 +73,9 @@ function Profile() {
                 </p>
               </div>
               <div>
-                <span className="text-primary">{items.length} items</span>
+                <Link to={"/items"} className="text-primary">
+                  {items.length} items
+                </Link>
                 <p className="w-7" style={{ fontSize: "14px" }}>
                   browse your items
                 </p>
